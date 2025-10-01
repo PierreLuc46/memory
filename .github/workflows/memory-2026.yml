@@ -1,0 +1,62 @@
+name: Memory 2026 CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-memory-2026:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Vérification des fichiers JPG
+        run: |
+          for file in $(find . -type f -name "*.jpg"); do
+            echo "Vérification de $file"
+            file "$file"
+          done
+
+  build-memory-2026:
+    needs: test-memory-2026
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t PierreLuc46/memory-2025 .
+
+  push-memory-2026:
+    needs: build-memory-2026
+    runs-on: self-hosted
+    steps:
+      - name: Login DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image
+        run: |
+          docker push PierreLuc46/memory-2025
+
+  deploy-memory-2026:
+    needs: push-memory-2026
+    runs-on: self-hosted
+    steps:
+      - name: Déploiement SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            docker pull PierreLuc46/memory-2025
+            docker stop memory-site || true
+            docker rm memory-site || true
+            docker run -d --name memory-site -p 80:80 PierreLuc46/memory-2025
+
