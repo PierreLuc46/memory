@@ -1,6 +1,5 @@
  docker run --rm -p 8080:80 memory-2025
-name: Memory 2026 CI/CD
-
+name: memory-2025
 # Déclenche le workflow à chaque push sur main
 on:
   push:
@@ -12,14 +11,25 @@ jobs:
   test-memory-2026:
     runs-on: self-hosted
     steps:
-      - name: Checkout repo
+      - name: Checkout du repo
         uses: actions/checkout@v3
 
-      - name: Vérification des fichiers JPG
+      - name: Installer le package file
+        run: sudo apt-get update && sudo apt-get install -y file
+
+      - name: Vérification et remplacement des fichiers JPG corrompus
         run: |
-          for file in $(find . -type f -name "*.jpg"); do
-            echo "Vérification de $file"
-            file "$file"
+           VALID_JPG="html/data/1.jpg"
+
+          # Parcours tous les fichiers JPG du repo
+          for file_path in $(find . -type f -name "*.jpg"); do
+            echo "Vérification de $file_path"
+            # Vérifie si le fichier est un JPEG valide
+            if ! file "$file_path" | grep -q "JPEG image data"; then
+              echo "Fichier corrompu détecté : $file_path"
+              echo "Remplacement par $VALID_JPG"
+              cp "$VALID_JPG" "$file_path"
+            fi
           done
 
   # Job de build Docker

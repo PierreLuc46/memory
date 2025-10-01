@@ -7,7 +7,7 @@ RUN apk add --no-cache file
 # Répertoire de travail (pas obligatoire mais pratique)
 WORKDIR /var/concentration
 
-# Copier le site (sources HTML) dans /var/concentration/html/
+# Copier le site (sources HTML + code)
 COPY html/ /var/concentration/html/
 
 # Copier notre configuration nginx dans /etc/nginx/nginx.conf
