@@ -68,4 +68,6 @@ jobs:
             cd /home/pierre/memory
             docker-compose pull
             docker-compose down
-            docker-compose up -d
+            docker-compose up -d 
+          port: 22
+          
