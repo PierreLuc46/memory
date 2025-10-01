@@ -7,29 +7,26 @@ on:
 
 jobs:
   # Job de test des fichiers JPG
-  test-memory-2026:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout du repo
-        uses: actions/checkout@v3
+  est-memory-2026:
+  runs-on: self-hosted
+  steps:
+    - name: Checkout du repo
+      uses: actions/checkout@v3
 
-      - name: Installer le package file
-        run: sudo apt-get update && sudo apt-get install -y file
+    - name: Vérification et remplacement des fichiers JPG corrompus
+      run: |
+        VALID_JPG="html/data/1.jpg"
 
-      - name: Vérification et remplacement des fichiers JPG corrompus
-        run: |
-          VALID_JPG="html/data/1.jpg"
-
-          # Parcours tous les fichiers JPG du repo
-          for file_path in $(find . -type f -name "*.jpg"); do
-            echo "Vérification de $file_path"
-            # Vérifie si le fichier est un JPEG valide
-            if ! file "$file_path" | grep -q "JPEG image data"; then
-              echo "Fichier corrompu détecté : $file_path"
-              echo "Remplacement par $VALID_JPG"
-              cp "$VALID_JPG" "$file_path"
-            fi
-          done
+        # Parcours tous les fichiers JPG du repo
+        for file_path in $(find . -type f -name "*.jpg"); do
+          echo "Vérification de $file_path"
+          # Vérifie si le fichier est un JPEG valide
+          if ! file "$file_path" | grep -q "JPEG image data"; then
+            echo "Fichier corrompu détecté : $file_path"
+            echo "Remplacement par $VALID_JPG"
+            cp "$VALID_JPG" "$file_path"
+          fi
+        done
 
   # Job de build Docker
   build-memory-2026:
