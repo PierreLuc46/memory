@@ -7,9 +7,9 @@ on:
 
 jobs:
   # Job de test des fichiers JPG
-  est-memory-2026:
-  runs-on: self-hosted
-  steps:
+  test-memory-2026:
+    runs-on: self-hosted
+    steps:
     - name: Checkout du repo
       uses: actions/checkout@v3
 
