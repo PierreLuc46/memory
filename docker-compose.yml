@@ -2,9 +2,9 @@ version: "3.9"
 
 services:
   memory:
-    image: PierreLuc46/memory-2025
+    image: docker.io/pierreluc46/memory-2025
     container_name: memory-site
     ports:
-      - "80:80"
+      - "8080:80"
     restart: always
 
