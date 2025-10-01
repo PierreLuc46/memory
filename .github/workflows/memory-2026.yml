@@ -1,6 +1,5 @@
- docker run --rm -p 8080:80 memory-2025
 name: memory-2025
-# Déclenche le workflow à chaque push sur main
+
 on:
   push:
     branches:
@@ -19,7 +18,7 @@ jobs:
 
       - name: Vérification et remplacement des fichiers JPG corrompus
         run: |
-           VALID_JPG="html/data/1.jpg"
+          VALID_JPG="html/data/1.jpg"
 
           # Parcours tous les fichiers JPG du repo
           for file_path in $(find . -type f -name "*.jpg"); do
@@ -41,8 +40,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Docker image
-        run: |
-          docker build -t pierreluc46/memory-2025 .
+        run: docker build -t pierreluc46/memory-2025 .
 
   # Job de push Docker
   push-memory-2026:
@@ -56,8 +54,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push Docker image
-        run: |
-          docker push pierreluc46/memory-2025
+        run: docker push pierreluc46/memory-2025
 
   # Job de déploiement via Docker Compose
   deploy-memory-2026:
@@ -71,7 +68,6 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-
             cd /home/pierre/memory
             docker-compose pull
             docker-compose down
