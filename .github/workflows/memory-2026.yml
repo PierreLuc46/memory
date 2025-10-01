@@ -64,10 +64,11 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
           script: |
             cd /home/pierre/memory
             docker-compose pull
             docker-compose down
             docker-compose up -d 
-          port: 22
+          
           
