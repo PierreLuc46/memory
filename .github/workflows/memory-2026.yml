@@ -1,11 +1,14 @@
+ docker run --rm -p 8080:80 memory-2025
 name: Memory 2026 CI/CD
 
+# Déclenche le workflow à chaque push sur main
 on:
   push:
     branches:
       - main
 
 jobs:
+  # Job de test des fichiers JPG
   test-memory-2026:
     runs-on: self-hosted
     steps:
@@ -19,6 +22,7 @@ jobs:
             file "$file"
           done
 
+  # Job de build Docker
   build-memory-2026:
     needs: test-memory-2026
     runs-on: self-hosted
@@ -28,8 +32,9 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t PierreLuc46/memory-2025 .
+          docker build -t pierreluc46/memory-2025 .
 
+  # Job de push Docker
   push-memory-2026:
     needs: build-memory-2026
     runs-on: self-hosted
@@ -42,21 +47,22 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push PierreLuc46/memory-2025
+          docker push pierreluc46/memory-2025
 
+  # Job de déploiement via Docker Compose
   deploy-memory-2026:
     needs: push-memory-2026
     runs-on: self-hosted
     steps:
-      - name: Déploiement SSH
+      - name: Déploiement via SSH et Docker Compose
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            docker pull PierreLuc46/memory-2025
-            docker stop memory-site || true
-            docker rm memory-site || true
-            docker run -d --name memory-site -p 80:80 PierreLuc46/memory-2025
 
+            cd /home/pierre/memory
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
