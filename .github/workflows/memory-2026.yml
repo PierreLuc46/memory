@@ -63,7 +63,7 @@ jobs:
 
       - name: Déploiement via SSH et Docker Compose
         run: |
-          echo "${{ secrets.DEPLOY_SSH_KEY_BASE64 }}" | base64 --decode > gh_actions_deploy
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" | base64 --decode > gh_actions_deploy
           chmod 600 gh_actions_deploy
           ssh -i gh_actions_deploy -o StrictHostKeyChecking=no pierre@${{ secrets.DEPLOY_HOST }} "
             cd /home/pierre/memory &&
