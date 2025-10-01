@@ -58,17 +58,19 @@ jobs:
     needs: push-memory-2026
     runs-on: self-hosted
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
       - name: Déploiement via SSH et Docker Compose
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/pierre/memory
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d 
-          
-          
+        run: |
+          echo "${{ secrets.DEPLOY_SSH_KEY_BASE64 }}" | base64 --decode > gh_actions_deploy
+          chmod 600 gh_actions_deploy
+          ssh -i gh_actions_deploy -o StrictHostKeyChecking=no pierre@${{ secrets.DEPLOY_HOST }} "
+            cd /home/pierre/memory &&
+            docker-compose pull &&
+            docker-compose down &&
+            docker-compose up -d
+          "
+  
+            
+            
